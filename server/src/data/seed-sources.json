@@ -26,5 +26,160 @@
     "config": {
       "maxItems": 30
     }
+  },
+  {
+    "id": "techcrunch-rss",
+    "name": "TechCrunch",
+    "nameZh": "TechCrunch",
+    "type": "rss",
+    "url": "https://techcrunch.com/feed/",
+    "category": "tech",
+    "language": "en",
+    "enabled": true,
+    "scrapeInterval": 1800,
+    "config": {
+      "maxItems": 25
+    }
+  },
+  {
+    "id": "the-verge-rss",
+    "name": "The Verge",
+    "nameZh": "The Verge",
+    "type": "rss",
+    "url": "https://www.theverge.com/rss/index.xml",
+    "category": "tech",
+    "language": "en",
+    "enabled": true,
+    "scrapeInterval": 1800,
+    "config": {
+      "maxItems": 25
+    }
+  },
+  {
+    "id": "ars-technica-rss",
+    "name": "Ars Technica",
+    "nameZh": "Ars Technica",
+    "type": "rss",
+    "url": "https://feeds.arstechnica.com/arstechnica/index",
+    "category": "tech",
+    "language": "en",
+    "enabled": true,
+    "scrapeInterval": 1800,
+    "config": {
+      "maxItems": 25
+    }
+  },
+  {
+    "id": "github-trending-html",
+    "name": "GitHub Trending",
+    "nameZh": "GitHub Trending",
+    "type": "html",
+    "url": "https://github.com/trending",
+    "category": "tech",
+    "language": "en",
+    "enabled": true,
+    "scrapeInterval": 3600,
+    "config": {
+      "maxItems": 25,
+      "selector": "article.Box-row h2 a"
+    }
+  },
+  {
+    "id": "cnn-international-rss",
+    "name": "CNN International",
+    "nameZh": "CNN 国际新闻",
+    "type": "rss",
+    "url": "http://rss.cnn.com/rss/edition_world.rss",
+    "category": "international",
+    "language": "en",
+    "enabled": true,
+    "scrapeInterval": 1800,
+    "config": {
+      "maxItems": 20
+    }
+  },
+  {
+    "id": "reuters-business-rss",
+    "name": "Reuters Business",
+    "nameZh": "路透商业",
+    "type": "rss",
+    "url": "https://www.reutersagency.com/feed/?taxonomy=best-topics&vocabularyName=events&taxonomy=events",
+    "category": "finance",
+    "language": "en",
+    "enabled": true,
+    "scrapeInterval": 1800,
+    "config": {
+      "maxItems": 20
+    }
+  },
+  {
+    "id": "yahoo-finance-rss",
+    "name": "Yahoo Finance",
+    "nameZh": "雅虎财经",
+    "type": "rss",
+    "url": "https://finance.yahoo.com/news/rssindex",
+    "category": "finance",
+    "language": "en",
+    "enabled": true,
+    "scrapeInterval": 1800,
+    "config": {
+      "maxItems": 20
+    }
+  },
+  {
+    "id": "reddit-technology-rss",
+    "name": "Reddit Technology",
+    "nameZh": "Reddit 科技",
+    "type": "rss",
+    "url": "https://www.reddit.com/r/technology/.rss",
+    "category": "tech",
+    "language": "en",
+    "enabled": true,
+    "scrapeInterval": 1800,
+    "config": {
+      "maxItems": 25
+    }
+  },
+  {
+    "id": "variety-entertainment-rss",
+    "name": "Variety Entertainment",
+    "nameZh": "Variety 娱乐",
+    "type": "rss",
+    "url": "https://variety.com/feed/",
+    "category": "entertainment",
+    "language": "en",
+    "enabled": true,
+    "scrapeInterval": 1800,
+    "config": {
+      "maxItems": 20
+    }
+  },
+  {
+    "id": "theguardian-society-rss",
+    "name": "The Guardian Society",
+    "nameZh": "卫报 社会版",
+    "type": "rss",
+    "url": "https://www.theguardian.com/society/rss",
+    "category": "society",
+    "language": "en",
+    "enabled": true,
+    "scrapeInterval": 1800,
+    "config": {
+      "maxItems": 20
+    }
+  },
+  {
+    "id": "npr-news-rss",
+    "name": "NPR News",
+    "nameZh": "NPR 新闻",
+    "type": "rss",
+    "url": "https://feeds.npr.org/1001/rss.xml",
+    "category": "international",
+    "language": "en",
+    "enabled": true,
+    "scrapeInterval": 1800,
+    "config": {
+      "maxItems": 20
+    }
   }
 ]

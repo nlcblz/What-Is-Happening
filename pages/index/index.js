@@ -3,30 +3,7 @@
 
 const api = require('../../utils/api')
 const config = require('../../utils/config')
-
-// 时间格式化：ISO 日期 → 相对时间
-function formatTimeAgo(dateStr) {
-  const now = Date.now()
-  const date = new Date(dateStr).getTime()
-  const diff = now - date
-  const minutes = Math.floor(diff / 60000)
-  const hours = Math.floor(diff / 3600000)
-  const days = Math.floor(diff / 86400000)
-
-  if (minutes < 1) return '刚刚'
-  if (minutes < 60) return `${minutes}分钟前`
-  if (hours < 24) return `${hours}小时前`
-  if (days < 30) return `${days}天前`
-  return new Date(dateStr).toLocaleDateString('zh-CN')
-}
-
-// 给趋势列表补上 timeAgo 字段
-function enrichTrends(trends) {
-  return trends.map(item => ({
-    ...item,
-    timeAgo: formatTimeAgo(item.publishedAt)
-  }))
-}
+const { enrichTrends } = require('../../utils/util')
 
 // Mock 数据 — 后端不可用时的降级方案
 function createMockTrends() {
@@ -64,7 +41,10 @@ Page({
     categories: [
       { id: 'all', name: '全部' },
       { id: 'tech', name: '科技' },
-      { id: 'international', name: '国际' }
+      { id: 'international', name: '国际' },
+      { id: 'finance', name: '财经' },
+      { id: 'entertainment', name: '娱乐' },
+      { id: 'society', name: '社会' }
     ],
     activeCategory: 'all'
   },

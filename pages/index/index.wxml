@@ -36,7 +36,7 @@
         <view class="card-summary" wx:if="{{item.summaryZh}}">{{item.summaryZh}}</view>
         <!-- 分类标签 -->
         <view class="card-footer">
-          <view class="category-tag">{{item.category === 'tech' ? '科技' : '国际'}}</view>
+          <view class="category-tag">{{item.categoryLabel}}</view>
         </view>
       </view>
     </view>

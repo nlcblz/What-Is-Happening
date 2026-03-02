@@ -88,6 +88,18 @@ page {
   background-color: #27ae60;
 }
 
+.source-tag.finance {
+  background-color: #f39c12;
+}
+
+.source-tag.entertainment {
+  background-color: #e74c3c;
+}
+
+.source-tag.society {
+  background-color: #9b59b6;
+}
+
 .time-ago {
   font-size: 22rpx;
   color: var(--text-hint);

@@ -9,6 +9,10 @@ function request(options) {
   // 拼接完整 URL
   const fullUrl = url.startsWith('http') ? url : `${config.apiBaseUrl}${url}`
 
+  // 从本地存储读取 API 认证信息
+  const apiKey = wx.getStorageSync('apiKey') || ''
+  const aiProvider = wx.getStorageSync('aiProvider') || 'deepseek'
+
   return new Promise((resolve, reject) => {
     wx.request({
       url: fullUrl,
@@ -16,6 +20,8 @@ function request(options) {
       data,
       header: {
         'Content-Type': 'application/json',
+        'X-API-Key': apiKey,
+        'X-AI-Provider': aiProvider,
         ...header
       },
       success(res) {
@@ -59,7 +65,13 @@ function refreshTrends() {
 
 // 生成 AI 摘要
 function summarize(data) {
-  return post('/api/summarize', data)
+  const apiKey = wx.getStorageSync('apiKey') || ''
+  const aiProvider = wx.getStorageSync('aiProvider') || 'deepseek'
+  return post('/api/summarize', {
+    ...data,
+    apiKey,
+    provider: aiProvider
+  })
 }
 
 // 健康检查
@@ -67,4 +79,14 @@ function healthCheck() {
   return get('/health')
 }
 
-module.exports = { request, get, post, getTrends, refreshTrends, summarize, healthCheck }
+// 获取数据源列表
+function getSources() {
+  return get('/api/sources')
+}
+
+// 获取分类列表
+function getCategories() {
+  return get('/api/sources/categories')
+}
+
+module.exports = { request, get, post, getTrends, refreshTrends, summarize, healthCheck, getSources, getCategories }

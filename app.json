@@ -18,15 +18,21 @@
     "list": [
       {
         "pagePath": "pages/index/index",
-        "text": "热点"
+        "text": "热点",
+        "iconPath": "images/tab-hot.png",
+        "selectedIconPath": "images/tab-hot-active.png"
       },
       {
         "pagePath": "pages/discover/discover",
-        "text": "发现"
+        "text": "发现",
+        "iconPath": "images/tab-discover.png",
+        "selectedIconPath": "images/tab-discover-active.png"
       },
       {
         "pagePath": "pages/settings/settings",
-        "text": "设置"
+        "text": "设置",
+        "iconPath": "images/tab-settings.png",
+        "selectedIconPath": "images/tab-settings-active.png"
       }
     ]
   },
