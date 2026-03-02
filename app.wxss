@@ -1,10 +1,23 @@
 /**app.wxss**/
+
+/* 全局颜色变量 */
+page {
+  --primary-color: #e94560;
+  --bg-color: #f5f5f5;
+  --card-bg: #ffffff;
+  --text-primary: #1a1a2e;
+  --text-secondary: #666666;
+  --text-hint: #999999;
+  --border-color: #eeeeee;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+  font-size: 28rpx;
+  color: var(--text-primary);
+  background-color: var(--bg-color);
+}
+
 .container {
-  height: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 200rpx 0;
   box-sizing: border-box;
-} 
+}

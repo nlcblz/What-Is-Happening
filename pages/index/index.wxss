@@ -1,62 +1,192 @@
-/**index.wxss**/
+/* pages/index/index.wxss */
 page {
   height: 100vh;
   display: flex;
   flex-direction: column;
-}
-.scrollarea {
-  flex: 1;
-  overflow-y: hidden;
+  background-color: var(--bg-color);
 }
 
-.userinfo {
+.page {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* ========== 分类标签栏 ========== */
+.category-bar {
+  flex-shrink: 0;
+  background-color: #ffffff;
+  border-bottom: 1rpx solid var(--border-color);
+  white-space: nowrap;
+}
+
+.category-list {
+  display: inline-flex;
+  padding: 20rpx 24rpx;
+  gap: 16rpx;
+}
+
+.category-item {
+  display: inline-block;
+  padding: 12rpx 32rpx;
+  border-radius: 32rpx;
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  background-color: var(--bg-color);
+  transition: all 0.2s ease;
+}
+
+.category-item.active {
+  color: #ffffff;
+  background-color: var(--primary-color);
+  font-weight: 500;
+}
+
+/* ========== 趋势卡片列表 ========== */
+.trend-scroll {
+  flex: 1;
+  height: 0;
+}
+
+.trend-list {
+  padding: 20rpx 24rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.trend-card {
+  background-color: var(--card-bg);
+  border-radius: 16rpx;
+  padding: 28rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+/* 来源 + 时间 */
+.card-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+
+.source-tag {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: 6rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: var(--text-hint);
+}
+
+.source-tag.tech {
+  background-color: #3498db;
+}
+
+.source-tag.international {
+  background-color: #27ae60;
+}
+
+.time-ago {
+  font-size: 22rpx;
+  color: var(--text-hint);
+}
+
+/* 标题 */
+.card-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.5;
+  margin-bottom: 12rpx;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 摘要 */
+.card-summary {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16rpx;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 底部标签 */
+.card-footer {
+  display: flex;
+  align-items: center;
+}
+
+.category-tag {
+  font-size: 22rpx;
+  color: var(--text-hint);
+  padding: 4rpx 14rpx;
+  border: 1rpx solid var(--border-color);
+  border-radius: 6rpx;
+}
+
+/* ========== 加载状态 ========== */
+.loading-area {
+  padding: 40rpx;
+  text-align: center;
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: var(--text-hint);
+}
+
+.no-more {
+  padding: 40rpx;
+  text-align: center;
+}
+
+.no-more-text {
+  font-size: 24rpx;
+  color: var(--text-hint);
+}
+
+/* ========== 空状态 ========== */
+.network-error {
+  padding: 16rpx 24rpx;
+  background-color: #fff3cd;
+  text-align: center;
+}
+
+.network-error-text {
+  font-size: 24rpx;
+  color: #856404;
+}
+
+.empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #aaa;
-  width: 80%;
+  justify-content: center;
+  padding: 120rpx 40rpx;
 }
 
-.userinfo-avatar {
-  overflow: hidden;
-  width: 128rpx;
-  height: 128rpx;
-  margin: 20rpx;
-  border-radius: 50%;
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 24rpx;
 }
 
-.usermotto {
-  margin-top: 200px;
+.empty-text {
+  font-size: 32rpx;
+  color: var(--text-secondary);
+  margin-bottom: 12rpx;
 }
 
-.avatar-wrapper {
-  padding: 0;
-  width: 56px !important;
-  border-radius: 8px;
-  margin-top: 40px;
-  margin-bottom: 40px;
-}
-
-.avatar {
-  display: block;
-  width: 56px;
-  height: 56px;
-}
-
-.nickname-wrapper {
-  display: flex;
-  width: 100%;
-  padding: 16px;
-  box-sizing: border-box;
-  border-top: .5px solid rgba(0, 0, 0, 0.1);
-  border-bottom: .5px solid rgba(0, 0, 0, 0.1);
-  color: black;
-}
-
-.nickname-label {
-  width: 105px;
-}
-
-.nickname-input {
-  flex: 1;
+.empty-hint {
+  font-size: 26rpx;
+  color: var(--text-hint);
 }

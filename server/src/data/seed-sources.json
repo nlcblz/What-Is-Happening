@@ -1,0 +1,30 @@
+[
+  {
+    "id": "bbc-news-rss",
+    "name": "BBC News",
+    "nameZh": "BBC 新闻",
+    "type": "rss",
+    "url": "https://feeds.bbci.co.uk/news/world/rss.xml",
+    "category": "international",
+    "language": "en",
+    "enabled": true,
+    "scrapeInterval": 1800,
+    "config": {
+      "maxItems": 20
+    }
+  },
+  {
+    "id": "hacker-news-rss",
+    "name": "Hacker News",
+    "nameZh": "Hacker News",
+    "type": "rss",
+    "url": "https://hnrss.org/frontpage",
+    "category": "tech",
+    "language": "en",
+    "enabled": true,
+    "scrapeInterval": 1800,
+    "config": {
+      "maxItems": 30
+    }
+  }
+]

@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  wih-server:
+    build: .
+    ports:
+      - "3000:80"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./src:/app/src
+    restart: unless-stopped

@@ -1,0 +1,60 @@
+/* pages/settings/settings.wxss */
+.container {
+  padding: 24rpx;
+}
+
+.section {
+  background-color: var(--card-bg);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 24rpx;
+}
+
+.section-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: var(--text-primary);
+  margin-bottom: 24rpx;
+}
+
+.form-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid var(--border-color);
+}
+
+.form-item:last-child {
+  border-bottom: none;
+}
+
+.form-label {
+  font-size: 28rpx;
+  color: var(--text-primary);
+  width: 180rpx;
+}
+
+.form-input {
+  flex: 1;
+  font-size: 28rpx;
+  text-align: right;
+  color: var(--text-secondary);
+}
+
+.picker-value {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+}
+
+.btn-area {
+  padding: 40rpx 24rpx;
+}
+
+.save-btn {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border-radius: 12rpx;
+  font-size: 30rpx;
+  border: none;
+}

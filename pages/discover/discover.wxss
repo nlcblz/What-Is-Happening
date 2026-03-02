@@ -1,0 +1,17 @@
+/* pages/discover/discover.wxss */
+.container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder {
+  text-align: center;
+  padding: 40rpx;
+}
+
+.placeholder-text {
+  font-size: 32rpx;
+  color: var(--text-hint);
+}

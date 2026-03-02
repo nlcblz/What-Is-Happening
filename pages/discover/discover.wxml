@@ -1,0 +1,6 @@
+<!--pages/discover/discover.wxml-->
+<view class="container">
+  <view class="placeholder">
+    <text class="placeholder-text">发现页 — 即将上线</text>
+  </view>
+</view>

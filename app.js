@@ -1,19 +1,11 @@
 // app.js
 App({
   onLaunch() {
-    // 展示本地存储能力
-    const logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
-
-    // 登录
-    wx.login({
-      success: res => {
-        // 发送 res.code 到后台换取 openId, sessionKey, unionId
-      }
-    })
+    // 初始化应用
+    console.log('[WIH] App launched')
   },
   globalData: {
+    apiBaseUrl: '', // 云托管地址，部署后填入
     userInfo: null
   }
 })

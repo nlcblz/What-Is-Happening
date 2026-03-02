@@ -1,0 +1,19 @@
+<!--pages/settings/settings.wxml-->
+<view class="container">
+  <view class="section">
+    <view class="section-title">AI 配置</view>
+    <view class="form-item">
+      <text class="form-label">AI 提供商</text>
+      <picker mode="selector" range="{{['DeepSeek', 'OpenAI']}}" value="{{aiProvider === 'openai' ? 1 : 0}}" bindchange="onProviderChange">
+        <view class="picker-value">{{aiProvider === 'openai' ? 'OpenAI' : 'DeepSeek'}}</view>
+      </picker>
+    </view>
+    <view class="form-item">
+      <text class="form-label">API Key</text>
+      <input class="form-input" type="text" placeholder="输入你的 API Key" value="{{apiKey}}" password bindinput="onApiKeyInput" />
+    </view>
+  </view>
+  <view class="btn-area">
+    <button class="save-btn" bindtap="onSaveSettings">保存设置</button>
+  </view>
+</view>
