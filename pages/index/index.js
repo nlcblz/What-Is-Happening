@@ -86,6 +86,14 @@ Page({
     this.loadTrends(true)
   },
 
+  // 点击趋势卡片，跳转到详情页
+  onTrendTap(e) {
+    const id = e.currentTarget.dataset.id
+    wx.navigateTo({
+      url: `../detail/detail?id=${id}`
+    })
+  },
+
   /**
    * 加载趋势数据
    * @param {boolean} reset - true=重新加载第一页, false=加载下一页

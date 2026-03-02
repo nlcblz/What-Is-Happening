@@ -24,7 +24,7 @@
     bindscrolltolower="onReachBottom">
 
     <view class="trend-list">
-      <view class="trend-card" wx:for="{{trends}}" wx:key="id">
+      <view class="trend-card" wx:for="{{trends}}" wx:key="id" bindtap="onTrendTap" data-id="{{item.id}}">
         <!-- 来源标签 + 时间 -->
         <view class="card-meta">
           <view class="source-tag {{item.category}}">{{item.sourceName}}</view>
