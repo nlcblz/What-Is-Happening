@@ -115,16 +115,16 @@ async function scrapeSource(source) {
 
 // 抓取所有启用的数据源
 async function scrapeAll() {
-  const sources = sourceModel.getEnabled()
+  const sources = await sourceModel.getEnabled()
   console.log(`[WIH] 开始抓取 ${sources.length} 个数据源...`)
 
   let totalAdded = 0
   for (const source of sources) {
     try {
       const items = await scrapeSource(source)
-      const added = trendModel.addBatch(items)
+      const added = await trendModel.addBatch(items)
       totalAdded += added.length
-      sourceModel.updateLastScraped(source.id)
+      await sourceModel.updateLastScraped(source.id)
     } catch (err) {
       console.error(`[WIH] 抓取失败 (${source.name}):`, err.message)
     }

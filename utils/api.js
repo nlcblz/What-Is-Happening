@@ -15,7 +15,7 @@ function buildQueryString(params) {
 
 // 基础请求方法 — 支持本地和云托管双模式
 function request(options) {
-  const { url, method = 'GET', data, header = {} } = options
+  const { url, method = 'GET', data, header = {}, timeout } = options
 
   // 从本地存储读取 API 认证信息
   const apiKey = wx.getStorageSync('apiKey') || ''
@@ -44,6 +44,7 @@ function request(options) {
           ...header
         },
         data: method !== 'GET' ? data : undefined, // GET 不需要 body
+        timeout: timeout || 15000, // 云托管最大支持 15 秒
         success(res) {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             resolve(res.data)
@@ -68,6 +69,7 @@ function request(options) {
       url: fullUrl,
       method,
       data,
+      timeout: timeout || 30000, // 本地开发允许更长超时
       header: {
         'Content-Type': 'application/json',
         'X-API-Key': apiKey,

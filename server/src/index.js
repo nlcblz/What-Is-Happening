@@ -3,10 +3,17 @@ const cors = require('cors')
 const config = require('./config')
 const mountRoutes = require('./routes')
 const { extractWxUser } = require('./middleware/auth')
+const dbModule = require('./models/db')
 const sourceModel = require('./models/source')
 const scraper = require('./services/scraper')
 
 const app = express()
+
+// ─── 就绪状态标志 ───
+// 云托管健康探针检测端口连通性，必须立即打开端口
+// API 接口在 DB 就绪前返回 503，防止脏数据
+let _ready = false
+function isReady() { return _ready }
 
 // 中间件：CORS
 app.use(cors())
@@ -17,7 +24,18 @@ app.use(express.json())
 // 中间件：提取微信用户身份
 app.use(extractWxUser)
 
-// 挂载所有路由
+// 中间件：就绪检查 — /api 路径在 DB 就绪前返回 503，/health 不受影响
+app.use('/api', (req, res, next) => {
+  if (!_ready) {
+    return res.status(503).json({
+      error: '服务初始化中',
+      message: '数据库正在连接，请稍后重试'
+    })
+  }
+  next()
+})
+
+// 挂载所有路由（含 /health）
 mountRoutes(app)
 
 // 全局错误处理中间件
@@ -29,24 +47,48 @@ app.use((err, req, res, next) => {
   })
 })
 
-// 初始化数据源 + 启动服务
+// ─── 启动：先开端口，再异步初始化 ───
+// 关键：app.listen() 必须立即执行，否则云托管探针超时报错
+// "Liveness probe failed: dial tcp ...connect: connection refused"
 const port = config.port
-sourceModel.init()
 
-app.listen(port, async () => {
+app.listen(port, () => {
   console.log(`[WIH Server] 服务启动于端口 ${port}`)
   console.log(`[WIH Server] 环境: ${config.nodeEnv}`)
-
-  // 首次抓取
-  try {
-    const added = await scraper.scrapeAll()
-    console.log(`[WIH] 首次抓取完成，新增 ${added} 条`)
-  } catch (err) {
-    console.error('[WIH] 首次抓取失败:', err.message)
-  }
-
-  // 启动定时抓取（每 30 分钟）
-  scraper.startScheduler('*/30 * * * *')
 })
+
+// 后台异步初始化 — 不阻塞端口监听
+;(async () => {
+  try {
+    // 1. 连接数据库
+    await dbModule.init()
+    console.log(`[WIH Server] 存储: ${dbModule.isCloud() ? '云数据库' : '内存'}`)
+
+    // 2. 初始化数据源（种子数据）
+    await sourceModel.init()
+
+    // 标记就绪 — API 开始正常响应
+    _ready = true
+    console.log('[WIH Server] 初始化完成，服务就绪')
+
+    // 3. 首次抓取
+    try {
+      const added = await scraper.scrapeAll()
+      console.log(`[WIH] 首次抓取完成，新增 ${added} 条`)
+    } catch (err) {
+      console.error('[WIH] 首次抓取失败:', err.message)
+    }
+
+    // 4. 启动定时抓取（每 30 分钟）
+    scraper.startScheduler('*/30 * * * *')
+  } catch (err) {
+    console.error('[WIH] 后台初始化失败:', err)
+    // 不调用 process.exit — 保持端口存活，让探针通过
+    // 运维可通过 /health 的 ready: false 判断异常
+  }
+})()
+
+// 导出就绪状态供 health 路由使用
+app.locals.isReady = isReady
 
 module.exports = app

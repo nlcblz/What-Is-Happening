@@ -6,7 +6,9 @@ function extractWxUser(req, res, next) {
   req.wxUser = {
     openid: req.headers['x-wx-openid'] || '',
     appid: req.headers['x-wx-appid'] || '',
-    unionid: req.headers['x-wx-unionid'] || ''
+    unionid: req.headers['x-wx-unionid'] || '',
+    source: req.headers['x-wx-source'] || '', // 调用来源标识
+    env: req.headers['x-wx-env'] || ''        // 云环境 ID
   }
   
   // 开发模式下允许无 openid 访问
@@ -25,4 +27,16 @@ function requireAuth(req, res, next) {
   next()
 }
 
-module.exports = { extractWxUser, requireAuth }
+// 验证请求来自微信生态（防止外部直接调用）
+function requireWxSource(req, res, next) {
+  // 开发模式下跳过来源检查
+  if (process.env.NODE_ENV === 'development') {
+    return next()
+  }
+  if (!req.wxUser.source) {
+    return res.status(403).json({ message: '禁止访问：非微信生态调用' })
+  }
+  next()
+}
+
+module.exports = { extractWxUser, requireAuth, requireWxSource }

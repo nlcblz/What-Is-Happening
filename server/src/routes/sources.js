@@ -60,102 +60,122 @@ function validateSourceData(data, isUpdate = false) {
 }
 
 // 获取所有数据源
-router.get('/', (req, res) => {
-  const sources = sourceModel.getAll()
-  res.json({
-    sources,
-    total: sources.length
-  })
+router.get('/', async (req, res, next) => {
+  try {
+    const sources = await sourceModel.getAll()
+    res.json({
+      sources,
+      total: sources.length
+    })
+  } catch (err) {
+    next(err)
+  }
 })
 
 // 获取分类列表
-router.get('/categories', (req, res) => {
-  const sources = sourceModel.getAll()
-  const categories = [...new Set(sources.map(s => s.category))].sort()
-  res.json({
-    categories,
-    total: categories.length
-  })
+router.get('/categories', async (req, res, next) => {
+  try {
+    const sources = await sourceModel.getAll()
+    const categories = [...new Set(sources.map(s => s.category))].sort()
+    res.json({
+      categories,
+      total: categories.length
+    })
+  } catch (err) {
+    next(err)
+  }
 })
 
 // 新增数据源
-router.post('/', (req, res) => {
-  const { name, url, type, category, enabled, config } = req.body
+router.post('/', async (req, res, next) => {
+  try {
+    const { name, url, type, category, enabled, config } = req.body
 
-  // 验证必填字段
-  const errors = validateSourceData(req.body)
-  if (errors.length > 0) {
-    return res.status(400).json({
-      error: '数据验证失败',
-      details: errors
+    // 验证必填字段
+    const errors = validateSourceData(req.body)
+    if (errors.length > 0) {
+      return res.status(400).json({
+        error: '数据验证失败',
+        details: errors
+      })
+    }
+
+    // 创建新数据源
+    const newSource = await sourceModel.add({
+      name,
+      url,
+      type,
+      category,
+      enabled,
+      config
     })
+
+    res.status(201).json({
+      message: '数据源创建成功',
+      source: newSource
+    })
+  } catch (err) {
+    next(err)
   }
-
-  // 创建新数据源
-  const newSource = sourceModel.add({
-    name,
-    url,
-    type,
-    category,
-    enabled,
-    config
-  })
-
-  res.status(201).json({
-    message: '数据源创建成功',
-    source: newSource
-  })
 })
 
 // 更新数据源
-router.put('/:id', (req, res) => {
-  const { id } = req.params
-  const updateData = req.body
+router.put('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const updateData = req.body
 
-  // 检查数据源是否存在
-  const source = sourceModel.getById(id)
-  if (!source) {
-    return res.status(404).json({
-      error: '数据源不存在',
-      id
+    // 检查数据源是否存在
+    const source = await sourceModel.getById(id)
+    if (!source) {
+      return res.status(404).json({
+        error: '数据源不存在',
+        id
+      })
+    }
+
+    // 验证更新数据
+    const errors = validateSourceData(updateData, true)
+    if (errors.length > 0) {
+      return res.status(400).json({
+        error: '数据验证失败',
+        details: errors
+      })
+    }
+
+    // 执行更新
+    const updated = await sourceModel.update(id, updateData)
+
+    res.json({
+      message: '数据源更新成功',
+      source: updated
     })
+  } catch (err) {
+    next(err)
   }
-
-  // 验证更新数据
-  const errors = validateSourceData(updateData, true)
-  if (errors.length > 0) {
-    return res.status(400).json({
-      error: '数据验证失败',
-      details: errors
-    })
-  }
-
-  // 执行更新
-  const updated = sourceModel.update(id, updateData)
-
-  res.json({
-    message: '数据源更新成功',
-    source: updated
-  })
 })
 
 // 删除数据源
-router.delete('/:id', (req, res) => {
-  const { id } = req.params
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params
 
-  // 检查数据源是否存在
-  const source = sourceModel.getById(id)
-  if (!source) {
-    return res.status(404).json({
-      error: '数据源不存在',
-      id
-    })
+    // 检查数据源是否存在
+    const source = await sourceModel.getById(id)
+    if (!source) {
+      return res.status(404).json({
+        error: '数据源不存在',
+        id
+      })
+    }
+
+    // 执行删除
+    await sourceModel.remove(id)
+
+    res.status(204).send()
+  } catch (err) {
+    next(err)
   }
-
-  // 执行删除
-  sourceModel.remove(id)
-
-  res.status(204).send()
 })
 
 module.exports = router
