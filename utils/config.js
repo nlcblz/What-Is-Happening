@@ -10,5 +10,14 @@ module.exports = {
   pageSize: 20,
 
   // AI 配置默认值
-  defaultAiProvider: 'deepseek'
+  defaultAiProvider: 'deepseek',
+
+  // 运行模式：'cloud' = 云托管 (wx.cloud.callContainer), 'local' = 本地开发 (wx.request)
+  mode: 'local',  // 部署云托管时改为 'cloud'
+
+  // 云托管环境 ID，部署时填入
+  cloudEnv: '',
+
+  // 云托管服务名称
+  cloudService: 'wih-server'
 }

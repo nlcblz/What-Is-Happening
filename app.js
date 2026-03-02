@@ -1,11 +1,20 @@
 // app.js
+const config = require('./utils/config')
+
 App({
   onLaunch() {
-    // 初始化应用
     console.log('[WIH] App launched')
+
+    // 初始化云开发环境（云托管模式下需要）
+    if (config.mode === 'cloud' && wx.cloud) {
+      wx.cloud.init({
+        env: config.cloudEnv,
+        traceUser: true
+      })
+      console.log('[WIH] 云开发环境已初始化')
+    }
   },
   globalData: {
-    apiBaseUrl: '', // 云托管地址，部署后填入
     userInfo: null
   }
 })
