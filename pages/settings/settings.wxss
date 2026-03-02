@@ -51,6 +51,29 @@
   padding: 40rpx 24rpx;
 }
 
+/* ========== 兴趣标签 ========== */
+.interest-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16rpx;
+}
+
+.interest-chip {
+  padding: 12rpx 32rpx;
+  border-radius: 32rpx;
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  border: 2rpx solid var(--border-color);
+  background-color: transparent;
+  transition: all 0.2s ease;
+}
+
+.interest-chip.selected {
+  color: #ffffff;
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
 .save-btn {
   background-color: var(--primary-color);
   color: #ffffff;

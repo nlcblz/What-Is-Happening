@@ -1,5 +1,21 @@
 <!--pages/settings/settings.wxml-->
 <view class="container">
+  <!-- 我的兴趣 -->
+  <view class="section">
+    <view class="section-title">我的兴趣</view>
+    <view class="interest-chips">
+      <view
+        class="interest-chip {{selectedInterests.indexOf(item.id) > -1 ? 'selected' : ''}}"
+        wx:for="{{interestCategories}}"
+        wx:key="id"
+        data-id="{{item.id}}"
+        bindtap="onInterestTap">
+        {{item.name}}
+      </view>
+    </view>
+  </view>
+
+  <!-- AI 配置 -->
   <view class="section">
     <view class="section-title">AI 配置</view>
     <view class="form-item">
