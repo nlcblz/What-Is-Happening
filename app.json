@@ -2,7 +2,8 @@
   "pages": [
     "pages/index/index",
     "pages/discover/discover",
-    "pages/settings/settings"
+    "pages/settings/settings",
+    "pages/detail/detail"
   ],
   "window": {
     "navigationBarTextStyle": "white",

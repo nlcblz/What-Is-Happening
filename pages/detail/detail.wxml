@@ -1,0 +1,66 @@
+<!--pages/detail/detail.wxml-->
+<view class="page">
+  <!-- 加载状态 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 错误状态 -->
+  <view class="error-state" wx:elif="{{error}}">
+    <text class="error-icon">😵</text>
+    <text class="error-text">加载失败</text>
+    <text class="error-hint">请返回重试</text>
+  </view>
+
+  <!-- 详情内容 -->
+  <view class="detail-content" wx:elif="{{trend}}">
+    <!-- 顶部标签区域：来源 + 分类 -->
+    <view class="tag-row">
+      <view class="source-tag {{trend.category}}">{{trend.sourceName}}</view>
+      <view class="category-tag">{{categoryLabel}}</view>
+    </view>
+
+    <!-- 标题 -->
+    <view class="detail-title">{{trend.title}}</view>
+
+    <!-- 发布时间 -->
+    <view class="time-row">
+      <text class="time-label">发布于</text>
+      <text class="time-value">{{publishTime}}</text>
+      <text class="time-ago">（{{timeAgo}}）</text>
+    </view>
+
+    <!-- 封面图 -->
+    <image
+      wx:if="{{trend.imageUrl}}"
+      class="detail-image"
+      src="{{trend.imageUrl}}"
+      mode="widthFix" />
+
+    <!-- 中文摘要 -->
+    <view class="summary-section" wx:if="{{trend.summaryZh}}">
+      <view class="section-title">📝 AI 摘要</view>
+      <view class="summary-text">{{trend.summaryZh}}</view>
+    </view>
+
+    <!-- 英文摘要（如有） -->
+    <view class="summary-section" wx:if="{{trend.summary && trend.summary !== trend.summaryZh}}">
+      <view class="section-title">📄 原文摘要</view>
+      <view class="summary-text summary-en">{{trend.summary}}</view>
+    </view>
+
+    <!-- 原文链接 -->
+    <view class="link-section" wx:if="{{trend.url}}">
+      <view class="section-title">🔗 原文链接</view>
+      <view class="link-row">
+        <text class="link-text" selectable>{{trend.url}}</text>
+        <view class="copy-btn" bindtap="onCopyLink">复制链接</view>
+      </view>
+    </view>
+
+    <!-- 底部信息 -->
+    <view class="detail-footer">
+      <text class="footer-hint">微信小程序内无法直接打开链接，请复制后在浏览器中访问</text>
+    </view>
+  </view>
+</view>

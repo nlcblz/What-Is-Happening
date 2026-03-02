@@ -1,0 +1,219 @@
+/* pages/detail/detail.wxss */
+/* 趋势详情页样式 */
+
+.page {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* ========== 加载状态 ========== */
+.loading-state {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400rpx;
+  padding-top: 200rpx;
+}
+
+.loading-text {
+  color: var(--text-hint);
+  font-size: 28rpx;
+}
+
+/* ========== 错误状态 ========== */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 200rpx;
+}
+
+.error-icon {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
+}
+
+.error-text {
+  font-size: 32rpx;
+  color: var(--text-primary);
+  margin-bottom: 12rpx;
+}
+
+.error-hint {
+  font-size: 26rpx;
+  color: var(--text-hint);
+}
+
+/* ========== 详情内容 ========== */
+.detail-content {
+  padding: 32rpx;
+}
+
+/* 标签行：来源 + 分类 */
+.tag-row {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  margin-bottom: 24rpx;
+}
+
+.source-tag {
+  display: inline-block;
+  padding: 6rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+  color: #ffffff;
+  background-color: var(--primary-color);
+}
+
+/* 按分类着色来源标签 */
+.source-tag.tech {
+  background-color: #3b82f6;
+}
+
+.source-tag.international {
+  background-color: #10b981;
+}
+
+.source-tag.finance {
+  background-color: #f59e0b;
+}
+
+.source-tag.entertainment {
+  background-color: #8b5cf6;
+}
+
+.source-tag.society {
+  background-color: #ef4444;
+}
+
+.category-tag {
+  display: inline-block;
+  padding: 6rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 22rpx;
+  color: var(--text-secondary);
+  background-color: var(--border-color);
+}
+
+/* 标题 */
+.detail-title {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin-bottom: 20rpx;
+}
+
+/* 时间行 */
+.time-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 32rpx;
+  padding-bottom: 24rpx;
+  border-bottom: 1rpx solid var(--border-color);
+}
+
+.time-label {
+  font-size: 24rpx;
+  color: var(--text-hint);
+  margin-right: 8rpx;
+}
+
+.time-value {
+  font-size: 24rpx;
+  color: var(--text-secondary);
+}
+
+.time-ago {
+  font-size: 24rpx;
+  color: var(--text-hint);
+  margin-left: 4rpx;
+}
+
+/* 封面图 */
+.detail-image {
+  width: 100%;
+  border-radius: 16rpx;
+  margin-bottom: 32rpx;
+}
+
+/* 摘要区域 */
+.summary-section {
+  background-color: var(--card-bg);
+  border-radius: 16rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 16rpx;
+}
+
+.summary-text {
+  font-size: 30rpx;
+  color: var(--text-primary);
+  line-height: 1.8;
+  letter-spacing: 0.5rpx;
+}
+
+.summary-en {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+/* 链接区域 */
+.link-section {
+  background-color: var(--card-bg);
+  border-radius: 16rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.link-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 16rpx;
+}
+
+.link-text {
+  flex: 1;
+  font-size: 24rpx;
+  color: #3b82f6;
+  word-break: break-all;
+  line-height: 1.6;
+}
+
+.copy-btn {
+  flex-shrink: 0;
+  padding: 12rpx 24rpx;
+  background-color: var(--primary-color);
+  color: #ffffff;
+  font-size: 24rpx;
+  border-radius: 8rpx;
+  font-weight: 500;
+}
+
+.copy-btn:active {
+  opacity: 0.8;
+}
+
+/* 底部提示 */
+.detail-footer {
+  padding: 32rpx 0;
+  text-align: center;
+}
+
+.footer-hint {
+  font-size: 22rpx;
+  color: var(--text-hint);
+  line-height: 1.6;
+}
