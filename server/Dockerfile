@@ -18,11 +18,7 @@ RUN npm ci --only=production
 # 复制源代码
 COPY src/ ./src/
 
-# 非 root 用户运行
-RUN addgroup --system appgroup && adduser --system --ingroup appgroup appuser
-USER appuser
-
-# 暴露端口 (云托管要求 80)
+# 暴露端口 (云托管要求 80，需 root 权限监听)
 EXPOSE 80
 
 # 启动服务
