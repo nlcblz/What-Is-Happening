@@ -58,6 +58,17 @@ function getTrends(params = {}) {
   return get('/api/trends', { page, pageSize, category })
 }
 
+// 搜索趋势
+function searchTrends(keyword, params = {}) {
+  const { page = 1, pageSize = config.pageSize } = params
+  return get('/api/trends', { page, pageSize, search: keyword })
+}
+
+// 根据 ID 获取单条趋势详情
+function getTrendById(id) {
+  return get(`/api/trends/${id}`)
+}
+
 // 刷新趋势数据
 function refreshTrends() {
   return post('/api/trends/refresh')
@@ -89,4 +100,4 @@ function getCategories() {
   return get('/api/sources/categories')
 }
 
-module.exports = { request, get, post, getTrends, refreshTrends, summarize, healthCheck, getSources, getCategories }
+module.exports = { request, get, post, getTrends, searchTrends, getTrendById, refreshTrends, summarize, healthCheck, getSources, getCategories }

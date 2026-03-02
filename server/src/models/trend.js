@@ -37,11 +37,21 @@ function addBatch(trends) {
 }
 
 // 获取趋势列表（分页）
-function getList({ page = 1, pageSize = 20, category } = {}) {
+function getList({ page = 1, pageSize = 20, category, search } = {}) {
   let filtered = db.trends
+  
   if (category && category !== 'all') {
     filtered = filtered.filter(t => t.category === category)
   }
+  
+  if (search) {
+    const keyword = search.toLowerCase()
+    filtered = filtered.filter(t => 
+      t.title.toLowerCase().includes(keyword) || 
+      (t.summaryZh && t.summaryZh.toLowerCase().includes(keyword))
+    )
+  }
+  
   const total = filtered.length
   const start = (page - 1) * pageSize
   const data = filtered.slice(start, start + pageSize)
