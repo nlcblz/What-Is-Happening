@@ -1,0 +1,24 @@
+{
+  "containerPort": 80,
+  "dockerfilePath": "Dockerfile",
+  "buildDir": ".",
+  "envVariables": {},
+  "minReplicas": 0,
+  "maxReplicas": 50,
+  "cpu": 0.5,
+  "mem": 1,
+  "logConfig": {
+    "logType": "json",
+    "logPath": "/app/logs"
+  },
+  "healthCheck": {
+    "type": "http",
+    "path": "/health",
+    "port": 80,
+    "initialDelaySeconds": 10,
+    "periodSeconds": 10,
+    "timeoutSeconds": 3,
+    "successThreshold": 1,
+    "failureThreshold": 3
+  }
+}
