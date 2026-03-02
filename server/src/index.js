@@ -2,6 +2,7 @@ const express = require('express')
 const cors = require('cors')
 const config = require('./config')
 const mountRoutes = require('./routes')
+const { extractWxUser } = require('./middleware/auth')
 const sourceModel = require('./models/source')
 const scraper = require('./services/scraper')
 
@@ -12,6 +13,9 @@ app.use(cors())
 
 // 中间件：JSON 解析
 app.use(express.json())
+
+// 中间件：提取微信用户身份
+app.use(extractWxUser)
 
 // 挂载所有路由
 mountRoutes(app)
