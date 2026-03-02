@@ -51,7 +51,55 @@ Page({
 
   onLoad() {
     console.log('[WIH] Index page loaded')
+    this._initCategories()
     this.loadTrends(true)
+  },
+
+  onShow() {
+    // 在 onShow 中检查兴趣变化，支持从设置页返回后动态更新
+    const interests = wx.getStorageSync('interests') || []
+    const interestsChanged = JSON.stringify(interests) !== JSON.stringify(this._interests)
+    
+    if (interestsChanged) {
+      console.log('[WIH] 用户兴趣已变更，更新分类标签')
+      this._interests = interests
+      this._initCategories()
+      // 重置为推荐或全部，刷新数据
+      this.setData({ page: 1, hasMore: true, trends: [] })
+      this.loadTrends(true)
+    }
+  },
+
+  /**
+   * 初始化分类标签 — 根据保存的兴趣动态构建
+   * 如果用户有兴趣，在最前面添加"推荐"标签
+   */
+  _initCategories() {
+    const interests = wx.getStorageSync('interests') || []
+    this._interests = interests
+    
+    const baseCategories = [
+      { id: 'all', name: '全部' },
+      { id: 'tech', name: '科技' },
+      { id: 'international', name: '国际' },
+      { id: 'finance', name: '财经' },
+      { id: 'entertainment', name: '娱乐' },
+      { id: 'society', name: '社会' }
+    ]
+    
+    let categories = baseCategories
+    let defaultCategory = 'all'
+    
+    // 如果用户设置了兴趣，在最前面插入"推荐"标签，并设为默认
+    if (interests.length > 0) {
+      categories = [{ id: 'recommended', name: '推荐' }, ...baseCategories]
+      defaultCategory = 'recommended'
+    }
+    
+    this.setData({
+      categories,
+      activeCategory: defaultCategory
+    })
   },
 
   onPullDownRefresh() {
@@ -95,12 +143,18 @@ Page({
   },
 
   /**
-   * 加载趋势数据
-   * @param {boolean} reset - true=重新加载第一页, false=加载下一页
-   */
+    * 加载趋势数据
+    * @param {boolean} reset - true=重新加载第一页, false=加载下一页
+    */
   loadTrends(reset) {
     const page = reset ? 1 : this.data.page
-    const category = this.data.activeCategory
+    let category = this.data.activeCategory
+    
+    // 如果选中"推荐"标签，将其转换为用户的兴趣列表（逗号分隔）
+    if (category === 'recommended') {
+      const interests = wx.getStorageSync('interests') || []
+      category = interests.join(',')
+    }
 
     this.setData({ loading: true, networkError: false })
 
