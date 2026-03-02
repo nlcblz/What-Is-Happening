@@ -91,6 +91,8 @@ Page({
     hasMore: true,
     networkError: false,
     searchValue: '',
+    searchActive: false,
+    searchResultCount: 0,
     categories: [
       { id: 'all', name: '全部' },
       { id: 'tech', name: '科技' },
@@ -137,15 +139,80 @@ Page({
     this.loadTrends(true)
   },
 
-  // 搜索输入（占位功能，暂不实现搜索逻辑）
-  onSearchInput(e) {
-    this.setData({ searchValue: e.detail.value })
+  // 点击趋势卡片，跳转到详情页
+  onTrendTap(e) {
+    const id = e.currentTarget.dataset.id
+    wx.navigateTo({
+      url: `../detail/detail?id=${id}`
+    })
   },
 
-  // 搜索确认（占位功能）
+  // 搜索输入
+  onSearchInput(e) {
+    const value = e.detail.value
+    this.setData({ searchValue: value })
+    // 输入清空时，退出搜索模式并重新加载普通列表
+    if (!value.trim() && this.data.searchActive) {
+      this.setData({
+        searchActive: false,
+        searchResultCount: 0,
+        page: 1,
+        hasMore: true,
+        trends: [],
+        leftCol: [],
+        rightCol: []
+      })
+      this.loadTrends(true)
+    }
+  },
+
+  // 搜索确认 — 调用搜索 API 或清除搜索
   onSearchConfirm() {
-    if (!this.data.searchValue.trim()) return
-    wx.showToast({ title: '搜索功能即将上线', icon: 'none', duration: 1500 })
+    const keyword = this.data.searchValue.trim()
+    // 关键词为空时退出搜索模式
+    if (!keyword) {
+      this.setData({
+        searchActive: false,
+        searchResultCount: 0,
+        page: 1,
+        hasMore: true,
+        trends: [],
+        leftCol: [],
+        rightCol: []
+      })
+      this.loadTrends(true)
+      return
+    }
+    // 执行搜索
+    this.setData({
+      searchActive: true,
+      loading: true,
+      networkError: false,
+      page: 1,
+      hasMore: true,
+      trends: [],
+      leftCol: [],
+      rightCol: []
+    })
+    api.searchTrends(keyword, { page: 1, pageSize: config.pageSize })
+      .then(res => {
+        const newTrends = enrichTrends(res.data || [])
+        const { leftCol, rightCol } = splitIntoColumns(newTrends)
+        this.setData({
+          trends: newTrends,
+          leftCol,
+          rightCol,
+          page: 2,
+          hasMore: res.hasMore,
+          loading: false,
+          searchResultCount: res.total || newTrends.length
+        })
+      })
+      .catch(err => {
+        console.error('[WIH] 搜索失败:', err.message)
+        this.setData({ loading: false, networkError: true, searchResultCount: 0 })
+        wx.showToast({ title: '搜索失败，请稍后重试', icon: 'none', duration: 2000 })
+      })
   },
 
   /**

@@ -92,6 +92,19 @@ page {
   font-weight: 500;
 }
 
+/* ========== 搜索结果提示 ========== */
+.search-result-bar {
+  flex-shrink: 0;
+  padding: 16rpx 24rpx;
+  background-color: var(--card-bg);
+  border-bottom: 1rpx solid var(--border-color);
+}
+
+.search-result-text {
+  font-size: 24rpx;
+  color: var(--text-hint);
+}
+
 /* ========== 趋势卡片网格（双列） ========== */
 .trend-scroll {
   flex: 1;

@@ -30,6 +30,12 @@
     </view>
   </scroll-view>
 
+  <!-- 搜索结果提示 -->
+  <view class="search-result-bar" wx:if="{{searchActive}}">
+    <text class="search-result-text" wx:if="{{searchResultCount > 0}}">找到 {{searchResultCount}} 条相关结果</text>
+    <text class="search-result-text" wx:else>未找到相关结果</text>
+  </view>
+
   <!-- 趋势卡片双列网格 -->
   <scroll-view
     scroll-y
@@ -42,7 +48,7 @@
     <view class="trend-grid" wx:if="{{trends.length > 0}}">
       <!-- 左列 -->
       <view class="grid-column">
-        <view class="grid-card" wx:for="{{leftCol}}" wx:key="id">
+        <view class="grid-card" wx:for="{{leftCol}}" wx:key="id" bindtap="onTrendTap" data-id="{{item.id}}">
           <!-- 封面图 -->
           <image
             wx:if="{{item.imageUrl}}"
@@ -69,7 +75,7 @@
       </view>
       <!-- 右列 -->
       <view class="grid-column">
-        <view class="grid-card" wx:for="{{rightCol}}" wx:key="id">
+        <view class="grid-card" wx:for="{{rightCol}}" wx:key="id" bindtap="onTrendTap" data-id="{{item.id}}">
           <!-- 封面图 -->
           <image
             wx:if="{{item.imageUrl}}"
