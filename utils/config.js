@@ -13,9 +13,9 @@ module.exports = {
   defaultAiProvider: 'deepseek',
 
   // 运行模式：'cloud' = 云托管 (wx.cloud.callContainer), 'local' = 本地开发 (wx.request)
-  mode: 'local',  // 部署云托管时改为 'cloud'
+  mode: 'cloud',
 
-  // 云托管环境 ID，部署时填入
+  // 云托管环境 ID — 部署后在云托管控制台获取，填入此处
   cloudEnv: '',
 
   // 云托管服务名称

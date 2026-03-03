@@ -7,7 +7,7 @@ multiple sources (Weibo, X, CNN, BBC, etc.) via AI-driven scrapers, presents the
 AI-generated summaries and images. Currently at **scaffold stage** — default WeChat MP template
 with a requirements blueprint in `requirements.md`.
 
-**AppID:** `wx43040a0ec0226423`
+**AppID:** `wx5752a7a56da6467c`
 **Component Framework:** glass-easel
 **Base Library:** 3.14.3 (trial channel)
 
