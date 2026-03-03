@@ -83,16 +83,18 @@ app.listen(port, () => {
     console.error('[WIH] 请在云托管控制台手动创建集合: sources, trends')
   }
 
-  // 3. 首次抓取 — 失败不影响服务
-  try {
-    const added = await scraper.scrapeAll()
-    console.log(`[WIH] 首次抓取完成，新增 ${added} 条`)
-  } catch (err) {
-    console.error('[WIH] 首次抓取失败:', err.message)
-  }
+  // 3. 延迟首次抓取 — 避免冷启动时与用户请求争抢资源
+  setTimeout(async () => {
+    try {
+      const added = await scraper.scrapeAll()
+      console.log(`[WIH] 首次抓取完成，新增 ${added} 条`)
+    } catch (err) {
+      console.error('[WIH] 首次抓取失败:', err.message)
+    }
 
-  // 4. 启动定时抓取（每 30 分钟）
-  scraper.startScheduler('*/30 * * * *')
+    // 4. 启动定时抓取（每 30 分钟）
+    scraper.startScheduler('*/30 * * * *')
+  }, 10000) // 10 秒后再开始抓取，给用户请求留出资源
 })()
 
 // 导出就绪状态供 health 路由使用

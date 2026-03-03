@@ -44,10 +44,14 @@ function request(options) {
           ...header
         },
         data: method !== 'GET' ? data : undefined, // GET 不需要 body
-        timeout: timeout || 15000, // 云托管最大支持 15 秒
+        timeout: timeout || 60000, // 冷启动可能需要较长时间
         success(res) {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             resolve(res.data)
+          } else if (res.statusCode === 503) {
+            // 服务初始化中 — 提示用户稍后重试
+            console.warn('[WIH] 服务正在初始化，稍后自动重试')
+            reject(new Error('服务正在启动中，请稍后刷新'))
           } else {
             console.error(`[WIH] 云托管请求失败: ${res.statusCode}`, res.data)
             reject(new Error(res.data.message || `请求失败: ${res.statusCode}`))
