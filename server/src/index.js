@@ -64,28 +64,35 @@ app.listen(port, () => {
     await dbModule.init()
     console.log(`[WIH Server] 存储: ${dbModule.isCloud() ? '云数据库' : '内存'}`)
 
-    // 2. 初始化数据源（种子数据）
-    await sourceModel.init()
-
-    // 标记就绪 — API 开始正常响应
+    // 标记就绪 — DB 连接成功即可响应 API
+    // 种子播种和抓取是可选的，失败不应阻塞核心服务
     _ready = true
     console.log('[WIH Server] 初始化完成，服务就绪')
-
-    // 3. 首次抓取
-    try {
-      const added = await scraper.scrapeAll()
-      console.log(`[WIH] 首次抓取完成，新增 ${added} 条`)
-    } catch (err) {
-      console.error('[WIH] 首次抓取失败:', err.message)
-    }
-
-    // 4. 启动定时抓取（每 30 分钟）
-    scraper.startScheduler('*/30 * * * *')
   } catch (err) {
-    console.error('[WIH] 后台初始化失败:', err)
+    console.error('[WIH] 数据库初始化失败:', err)
     // 不调用 process.exit — 保持端口存活，让探针通过
     // 运维可通过 /health 的 ready: false 判断异常
+    return
   }
+
+  // 2. 初始化数据源（种子数据）— 失败不影响服务
+  try {
+    await sourceModel.init()
+  } catch (err) {
+    console.error('[WIH] 种子数据播种失败（集合可能未创建）:', err.message)
+    console.error('[WIH] 请在云托管控制台手动创建集合: sources, trends')
+  }
+
+  // 3. 首次抓取 — 失败不影响服务
+  try {
+    const added = await scraper.scrapeAll()
+    console.log(`[WIH] 首次抓取完成，新增 ${added} 条`)
+  } catch (err) {
+    console.error('[WIH] 首次抓取失败:', err.message)
+  }
+
+  // 4. 启动定时抓取（每 30 分钟）
+  scraper.startScheduler('*/30 * * * *')
 })()
 
 // 导出就绪状态供 health 路由使用

@@ -14,6 +14,18 @@ async function init() {
     _db = _cloudApp.database()
     _isCloud = true
     console.log(`[WIH] 云数据库已连接 (环境: ${config.tcbEnv})`)
+
+    // 验证必需集合是否存在（CloudBase 不支持代码创建集合）
+    const requiredCollections = ['sources', 'trends']
+    for (const col of requiredCollections) {
+      try {
+        await _db.collection(col).limit(1).get()
+        console.log(`[WIH] 集合 ${col} 已就绪`)
+      } catch (err) {
+        console.warn(`[WIH] 集合 ${col} 不存在或无权限: ${err.message}`)
+        console.warn(`[WIH] 请在云托管控制台 → 数据库 → 手动创建集合: ${col}`)
+      }
+    }
   } else {
     // 内存模式（本地开发）
     _db = { sources: [], trends: [] }
