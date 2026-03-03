@@ -1,16 +1,50 @@
 // server/src/models/trend.js
-const dbModule = require('./db')
+// 趋势模型 — MySQL 版
+const db = require('./db')
 
-let nextId = 1
+// 行数据 → 应用对象
+function rowToTrend(row) {
+  if (!row) return null
+  return {
+    id: String(row.id),
+    title: row.title,
+    url: row.url,
+    summary: row.summary,
+    summaryZh: row.summary_zh,
+    sourceId: row.source_id,
+    sourceName: row.source_name,
+    category: row.category,
+    imageUrl: row.image_url,
+    publishedAt: row.published_at ? row.published_at.toISOString() : null,
+    scrapedAt: row.scraped_at ? row.scraped_at.toISOString() : null,
+    summarized: !!row.summarized
+  }
+}
 
 // 添加趋势条目
 async function add(trend) {
-  const entry = {
+  const sql = `INSERT INTO trends (title, url, summary, summary_zh, source_id, source_name, category, image_url, published_at, scraped_at, summarized)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)`
+  const params = [
+    trend.title,
+    trend.url || '',
+    trend.summary || '',
+    trend.summaryZh || '',
+    trend.sourceId || '',
+    trend.sourceName || '',
+    trend.category || 'general',
+    trend.imageUrl || '',
+    trend.publishedAt || new Date().toISOString(),
+    trend.summary ? 1 : 0
+  ]
+  const result = await db.query(sql, params)
+  return {
+    id: String(result.insertId),
     title: trend.title,
     url: trend.url || '',
     summary: trend.summary || '',
     summaryZh: trend.summaryZh || '',
-    sourceId: trend.sourceId,
+    sourceId: trend.sourceId || '',
     sourceName: trend.sourceName || '',
     category: trend.category || 'general',
     imageUrl: trend.imageUrl || '',
@@ -18,40 +52,19 @@ async function add(trend) {
     scrapedAt: new Date().toISOString(),
     summarized: !!trend.summary
   }
-
-  if (dbModule.isCloud()) {
-    const cloudDb = dbModule.getDb()
-    const result = await cloudDb.collection('trends').add(entry)
-    return { id: result.id, ...entry }
-  } else {
-    entry.id = String(nextId++)
-    const memDb = dbModule.getDb()
-    memDb.trends.unshift(entry) // 最新的在前面
-    return entry
-  }
 }
 
-// 批量添加（去重）
+// 批量添加（按 URL 去重）
 async function addBatch(trends) {
   const added = []
   for (const t of trends) {
     if (!t.url) continue
-    
+
     // 按 URL 去重
-    if (dbModule.isCloud()) {
-      const cloudDb = dbModule.getDb()
-      const { total } = await cloudDb.collection('trends').where({ url: t.url }).count()
-      if (total === 0) {
-        const entry = await add(t)
-        added.push(entry)
-      }
-    } else {
-      const memDb = dbModule.getDb()
-      const exists = memDb.trends.find(existing => existing.url === t.url)
-      if (!exists) {
-        const entry = await add(t)
-        added.push(entry)
-      }
+    const existing = await db.query('SELECT id FROM trends WHERE url = ? LIMIT 1', [t.url])
+    if (existing.length === 0) {
+      const entry = await add(t)
+      added.push(entry)
     }
   }
   return added
@@ -59,157 +72,78 @@ async function addBatch(trends) {
 
 // 获取趋势列表（分页、多分类筛选、搜索）
 async function getList({ page = 1, pageSize = 20, category, search } = {}) {
-  if (dbModule.isCloud()) {
-    const cloudDb = dbModule.getDb()
-    const _ = dbModule.getCommand()
-    
-    // 构建查询条件
-    const conditions = []
-    
-    // 分类筛选：支持逗号分隔的多分类（OR 逻辑）
-    if (category && category !== 'all') {
-      if (category.includes(',')) {
-        // 多分类模式：至少匹配其中一个
-        const categories = category.split(',').map(c => c.trim())
-        conditions.push({ category: _.in(categories) })
-      } else {
-        // 单分类模式：精确匹配
-        conditions.push({ category })
-      }
+  const conditions = []
+  const params = []
+
+  // 分类筛选：支持逗号分隔的多分类（OR 逻辑）
+  if (category && category !== 'all') {
+    if (category.includes(',')) {
+      const categories = category.split(',').map(c => c.trim())
+      const placeholders = categories.map(() => '?').join(', ')
+      conditions.push(`category IN (${placeholders})`)
+      params.push(...categories)
+    } else {
+      conditions.push('category = ?')
+      params.push(category)
     }
-    
-    // 搜索筛选
-    if (search) {
-      const regexp = cloudDb.RegExp({ regexp: search, options: 'i' })
-      conditions.push(
-        _.or([
-          { title: regexp },
-          { summaryZh: regexp }
-        ])
-      )
-    }
-    
-    // 组合查询条件
-    const query = conditions.length > 0 
-      ? (conditions.length === 1 
-          ? cloudDb.collection('trends').where(conditions[0])
-          : cloudDb.collection('trends').where(_.and(conditions)))
-      : cloudDb.collection('trends')
-    
-    // 获取总数
-    const { total } = await query.count()
-    
-    // 分页查询
-    const { data } = await query
-      .orderBy('scrapedAt', 'desc')
-      .skip((page - 1) * pageSize)
-      .limit(pageSize)
-      .get()
-    
-    return {
-      data: dbModule.normalizeDocs(data),
-      total,
-      page,
-      pageSize,
-      hasMore: (page - 1) * pageSize + data.length < total
-    }
-  } else {
-    // 内存模式
-    const memDb = dbModule.getDb()
-    let filtered = memDb.trends
-    
-    // 分类筛选：支持逗号分隔的多分类（OR 逻辑）
-    if (category && category !== 'all') {
-      if (category.includes(',')) {
-        // 多分类模式：至少匹配其中一个
-        const categories = category.split(',').map(c => c.trim())
-        filtered = filtered.filter(t => categories.includes(t.category))
-      } else {
-        // 单分类模式：精确匹配（向后兼容）
-        filtered = filtered.filter(t => t.category === category)
-      }
-    }
-    
-    if (search) {
-      const keyword = search.toLowerCase()
-      filtered = filtered.filter(t => 
-        t.title.toLowerCase().includes(keyword) || 
-        (t.summaryZh && t.summaryZh.toLowerCase().includes(keyword))
-      )
-    }
-    
-    const total = filtered.length
-    const start = (page - 1) * pageSize
-    const data = filtered.slice(start, start + pageSize)
-    return {
-      data,
-      total,
-      page,
-      pageSize,
-      hasMore: start + pageSize < total
-    }
+  }
+
+  // 搜索筛选（标题 + 中文摘要模糊匹配）
+  if (search) {
+    conditions.push('(title LIKE ? OR summary_zh LIKE ?)')
+    const keyword = `%${search}%`
+    params.push(keyword, keyword)
+  }
+
+  const whereClause = conditions.length > 0 ? `WHERE ${conditions.join(' AND ')}` : ''
+
+  // 获取总数
+  const countRows = await db.query(`SELECT COUNT(*) AS total FROM trends ${whereClause}`, params)
+  const total = countRows[0].total
+
+  // 分页查询
+  const offset = (page - 1) * pageSize
+  const dataRows = await db.query(
+    `SELECT * FROM trends ${whereClause} ORDER BY scraped_at DESC LIMIT ? OFFSET ?`,
+    [...params, pageSize, offset]
+  )
+
+  return {
+    data: dataRows.map(rowToTrend),
+    total,
+    page,
+    pageSize,
+    hasMore: offset + dataRows.length < total
   }
 }
 
 // 根据 ID 获取趋势
 async function getById(id) {
-  if (dbModule.isCloud()) {
-    const cloudDb = dbModule.getDb()
-    const { data } = await cloudDb.collection('trends').doc(String(id)).get()
-    return data.length > 0 ? dbModule.normalizeDoc(data[0]) : null
-  } else {
-    const memDb = dbModule.getDb()
-    const strId = String(id)
-    return memDb.trends.find(t => t.id === strId)
-  }
+  const rows = await db.query('SELECT * FROM trends WHERE id = ?', [parseInt(id, 10)])
+  return rows.length > 0 ? rowToTrend(rows[0]) : null
 }
 
 // 更新摘要
 async function updateSummary(id, summary, summaryZh) {
-  if (dbModule.isCloud()) {
-    const cloudDb = dbModule.getDb()
-    await cloudDb.collection('trends').doc(String(id)).update({
-      summary,
-      summaryZh: summaryZh || '',
-      summarized: true
-    })
-    return await getById(id)
-  } else {
-    const trend = await getById(id)
-    if (trend) {
-      trend.summary = summary
-      trend.summaryZh = summaryZh || ''
-      trend.summarized = true
-    }
-    return trend
-  }
+  await db.query(
+    'UPDATE trends SET summary = ?, summary_zh = ?, summarized = 1 WHERE id = ?',
+    [summary, summaryZh || '', parseInt(id, 10)]
+  )
+  return await getById(id)
 }
 
 // 获取未摘要的趋势
 async function getUnsummarized(limit = 10) {
-  if (dbModule.isCloud()) {
-    const cloudDb = dbModule.getDb()
-    const { data } = await cloudDb.collection('trends')
-      .where({ summarized: false })
-      .limit(limit)
-      .get()
-    return dbModule.normalizeDocs(data)
-  } else {
-    const memDb = dbModule.getDb()
-    return memDb.trends.filter(t => !t.summarized).slice(0, limit)
-  }
+  const rows = await db.query(
+    'SELECT * FROM trends WHERE summarized = 0 ORDER BY scraped_at DESC LIMIT ?',
+    [limit]
+  )
+  return rows.map(rowToTrend)
 }
 
-// 清空所有趋势
+// 清空所有趋势（仅开发环境使用）
 async function clear() {
-  if (dbModule.isCloud()) {
-    // 云数据库模式：跳过或抛出不支持错误
-    throw new Error('云数据库模式不支持 clear() 操作')
-  } else {
-    const memDb = dbModule.getDb()
-    memDb.trends = []
-    nextId = 1
-  }
+  await db.query('TRUNCATE TABLE trends')
 }
 
 module.exports = { add, addBatch, getList, getById, updateSummary, getUnsummarized, clear }

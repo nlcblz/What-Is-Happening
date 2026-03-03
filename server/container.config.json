@@ -2,7 +2,13 @@
   "containerPort": 80,
   "dockerfilePath": "Dockerfile",
   "buildDir": ".",
-  "envVariables": {},
+  "envVariables": {
+    "MYSQL_HOST": "10.28.104.219",
+    "MYSQL_PORT": "3306",
+    "MYSQL_USER": "root",
+    "MYSQL_PASSWORD": "",
+    "MYSQL_DATABASE": "wih"
+  },
   "minReplicas": 0,
   "maxReplicas": 50,
   "cpu": 0.5,

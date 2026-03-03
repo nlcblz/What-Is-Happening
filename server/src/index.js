@@ -60,16 +60,15 @@ app.listen(port, () => {
 // 后台异步初始化 — 不阻塞端口监听
 ;(async () => {
   try {
-    // 1. 连接数据库
+    // 1. 连接 MySQL 数据库 + 自动建表
     await dbModule.init()
-    console.log(`[WIH Server] 存储: ${dbModule.isCloud() ? '云数据库' : '内存'}`)
+    console.log('[WIH Server] MySQL 数据库已就绪')
 
     // 标记就绪 — DB 连接成功即可响应 API
-    // 种子播种和抓取是可选的，失败不应阻塞核心服务
     _ready = true
     console.log('[WIH Server] 初始化完成，服务就绪')
   } catch (err) {
-    console.error('[WIH] 数据库初始化失败:', err)
+    console.error('[WIH] MySQL 初始化失败:', err)
     // 不调用 process.exit — 保持端口存活，让探针通过
     // 运维可通过 /health 的 ready: false 判断异常
     return
@@ -79,8 +78,7 @@ app.listen(port, () => {
   try {
     await sourceModel.init()
   } catch (err) {
-    console.error('[WIH] 种子数据播种失败（集合可能未创建）:', err.message)
-    console.error('[WIH] 请在云托管控制台手动创建集合: sources, trends')
+    console.error('[WIH] 种子数据播种失败:', err.message)
   }
 
   // 3. 延迟首次抓取 — 避免冷启动时与用户请求争抢资源
