@@ -44,6 +44,24 @@ const SCHEMA_SQL = [
     INDEX idx_scraped_at (scraped_at),
     INDEX idx_url (url(255)),
     INDEX idx_summarized (summarized)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`,
+
+  `CREATE TABLE IF NOT EXISTS admin_posts (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(512) NOT NULL,
+    content_md MEDIUMTEXT NOT NULL DEFAULT '',
+    content_html MEDIUMTEXT NOT NULL DEFAULT '',
+    summary VARCHAR(512) NOT NULL DEFAULT '',
+    category VARCHAR(32) NOT NULL DEFAULT 'announcement',
+    cover_url TEXT NOT NULL DEFAULT '',
+    author VARCHAR(64) NOT NULL DEFAULT '管理员',
+    status ENUM('draft', 'published', 'archived') NOT NULL DEFAULT 'draft',
+    published_at DATETIME DEFAULT NULL,
+    created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at DATETIME DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+    INDEX idx_status (status),
+    INDEX idx_published_at (published_at),
+    INDEX idx_category (category)
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`
 ]
 
@@ -102,7 +120,7 @@ async function init() {
   for (const sql of SCHEMA_SQL) {
     await executeWithRetry(_pool, sql)
   }
-  console.log('[WIH] 数据表已就绪 (sources, trends)')
+  console.log('[WIH] 数据表已就绪 (sources, trends, admin_posts)')
 
   // 迁移：为已有表添加新字段（如果不存在）
   const migrations = [

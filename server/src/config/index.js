@@ -13,6 +13,9 @@ module.exports = {
     database: process.env.MYSQL_DATABASE || 'wih'
   },
 
+  // 管理员 OpenID 列表（逗号分隔）
+  adminOpenIds: (process.env.ADMIN_OPENIDS || '').split(',').filter(Boolean),
+
   // AI 摘要服务配置
   defaultAiProvider: process.env.DEFAULT_AI_PROVIDER || 'deepseek',
   deepseek: {

@@ -1,19 +1,25 @@
 // server/src/middleware/auth.js
 // 从请求头提取微信用户身份信息
+const config = require('../config')
 
 function extractWxUser(req, res, next) {
+  const openid = req.headers['x-wx-openid'] || ''
+  
   // 微信云托管自动注入的用户信息
   req.wxUser = {
-    openid: req.headers['x-wx-openid'] || '',
+    openid: openid,
     appid: req.headers['x-wx-appid'] || '',
     unionid: req.headers['x-wx-unionid'] || '',
     source: req.headers['x-wx-source'] || '', // 调用来源标识
-    env: req.headers['x-wx-env'] || ''        // 云环境 ID
+    env: req.headers['x-wx-env'] || '',       // 云环境 ID
+    // 管理员检测：检查 OpenID 是否在管理员列表中
+    isAdmin: config.adminOpenIds.includes(openid) || process.env.NODE_ENV === 'development'
   }
   
   // 开发模式下允许无 openid 访问
   if (process.env.NODE_ENV === 'development' && !req.wxUser.openid) {
     req.wxUser.openid = 'dev-user'
+    req.wxUser.isAdmin = true // 开发模式默认管理员
   }
   
   next()
