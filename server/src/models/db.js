@@ -29,6 +29,9 @@ const SCHEMA_SQL = [
     url TEXT NOT NULL DEFAULT '',
     summary TEXT NOT NULL DEFAULT '',
     summary_zh TEXT NOT NULL DEFAULT '',
+    content MEDIUMTEXT NOT NULL DEFAULT '',
+    content_zh MEDIUMTEXT NOT NULL DEFAULT '',
+    language VARCHAR(8) NOT NULL DEFAULT 'en',
     source_id VARCHAR(64) NOT NULL DEFAULT '',
     source_name VARCHAR(128) NOT NULL DEFAULT '',
     category VARCHAR(32) NOT NULL DEFAULT 'general',
@@ -36,6 +39,7 @@ const SCHEMA_SQL = [
     published_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     scraped_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     summarized TINYINT(1) NOT NULL DEFAULT 0,
+    translated TINYINT(1) NOT NULL DEFAULT 0,
     INDEX idx_category (category),
     INDEX idx_scraped_at (scraped_at),
     INDEX idx_url (url(255)),
@@ -99,6 +103,24 @@ async function init() {
     await executeWithRetry(_pool, sql)
   }
   console.log('[WIH] 数据表已就绪 (sources, trends)')
+
+  // 迁移：为已有表添加新字段（如果不存在）
+  const migrations = [
+    "ALTER TABLE trends ADD COLUMN IF NOT EXISTS content MEDIUMTEXT NOT NULL DEFAULT '' AFTER summary_zh",
+    "ALTER TABLE trends ADD COLUMN IF NOT EXISTS content_zh MEDIUMTEXT NOT NULL DEFAULT '' AFTER content",
+    "ALTER TABLE trends ADD COLUMN IF NOT EXISTS language VARCHAR(8) NOT NULL DEFAULT 'en' AFTER content_zh",
+    "ALTER TABLE trends ADD COLUMN IF NOT EXISTS translated TINYINT(1) NOT NULL DEFAULT 0 AFTER summarized"
+  ]
+  for (const sql of migrations) {
+    try {
+      await executeWithRetry(_pool, sql)
+    } catch (err) {
+      // 忽略 "Duplicate column" 错误（MySQL 5.7 不支持 IF NOT EXISTS）
+      if (!err.message.includes('Duplicate column')) {
+        console.warn('[WIH] 迁移警告:', err.message)
+      }
+    }
+  }
 }
 
 // TDSQL-C Serverless 冷启动重试：遇到 "CynosDB serverless instance is resuming" 时自动重试

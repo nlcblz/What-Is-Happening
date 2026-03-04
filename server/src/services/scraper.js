@@ -24,7 +24,10 @@ async function scrapeRSS(source) {
     const items = feed.items.slice(0, maxItems).map(item => ({
       title: item.title || '',
       url: item.link || '',
+      // RSS 的 content 作为初始全文（可能是 HTML 或摘要）
+      content: item.content || item['content:encoded'] || item.contentSnippet || '',
       description: item.contentSnippet || item.content || '',
+      language: source.language || 'en',
       sourceId: source.id,
       sourceName: source.name,
       category: source.category,
@@ -81,7 +84,9 @@ async function scrapeHTML(source) {
         items.push({
           title,
           url: url.startsWith('http') ? url : `${source.url}${url}`,
+          content: '',
           description: '',
+          language: source.language || 'en',
           sourceId: source.id,
           sourceName: source.name,
           category: source.category,

@@ -11,31 +11,39 @@ function rowToTrend(row) {
     url: row.url,
     summary: row.summary,
     summaryZh: row.summary_zh,
+    content: row.content || '',
+    contentZh: row.content_zh || '',
+    language: row.language || 'en',
     sourceId: row.source_id,
     sourceName: row.source_name,
     category: row.category,
     imageUrl: row.image_url,
     publishedAt: row.published_at ? row.published_at.toISOString() : null,
     scrapedAt: row.scraped_at ? row.scraped_at.toISOString() : null,
-    summarized: !!row.summarized
+    summarized: !!row.summarized,
+    translated: !!row.translated
   }
 }
 
 // 添加趋势条目
 async function add(trend) {
-  const sql = `INSERT INTO trends (title, url, summary, summary_zh, source_id, source_name, category, image_url, published_at, scraped_at, summarized)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)`
+  const sql = `INSERT INTO trends (title, url, summary, summary_zh, content, content_zh, language, source_id, source_name, category, image_url, published_at, scraped_at, summarized, translated)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?)`
   const params = [
     trend.title,
     trend.url || '',
     trend.summary || '',
     trend.summaryZh || '',
+    trend.content || '',
+    trend.contentZh || '',
+    trend.language || 'en',
     trend.sourceId || '',
     trend.sourceName || '',
     trend.category || 'general',
     trend.imageUrl || '',
     trend.publishedAt || new Date().toISOString(),
-    trend.summary ? 1 : 0
+    trend.summary ? 1 : 0,
+    trend.translated ? 1 : 0
   ]
   const result = await db.query(sql, params)
   return {
@@ -44,13 +52,17 @@ async function add(trend) {
     url: trend.url || '',
     summary: trend.summary || '',
     summaryZh: trend.summaryZh || '',
+    content: trend.content || '',
+    contentZh: trend.contentZh || '',
+    language: trend.language || 'en',
     sourceId: trend.sourceId || '',
     sourceName: trend.sourceName || '',
     category: trend.category || 'general',
     imageUrl: trend.imageUrl || '',
     publishedAt: trend.publishedAt || new Date().toISOString(),
     scrapedAt: new Date().toISOString(),
-    summarized: !!trend.summary
+    summarized: !!trend.summary,
+    translated: !!trend.translated
   }
 }
 
@@ -132,6 +144,24 @@ async function updateSummary(id, summary, summaryZh) {
   return await getById(id)
 }
 
+// 更新翻译（全文）
+async function updateTranslation(id, contentZh) {
+  await db.query(
+    'UPDATE trends SET content_zh = ?, translated = 1 WHERE id = ?',
+    [contentZh || '', parseInt(id, 10)]
+  )
+  return await getById(id)
+}
+
+// 更新全文内容
+async function updateContent(id, content, language) {
+  await db.query(
+    'UPDATE trends SET content = ?, language = ? WHERE id = ?',
+    [content || '', language || 'en', parseInt(id, 10)]
+  )
+  return await getById(id)
+}
+
 // 获取未摘要的趋势
 async function getUnsummarized(limit = 10) {
   const rows = await db.query(
@@ -146,4 +176,4 @@ async function clear() {
   await db.query('TRUNCATE TABLE trends')
 }
 
-module.exports = { add, addBatch, getList, getById, updateSummary, getUnsummarized, clear }
+module.exports = { add, addBatch, getList, getById, updateSummary, updateTranslation, updateContent, getUnsummarized, clear }
