@@ -1,0 +1,112 @@
+/* pages/announcements/announcements.wxss */
+.page {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+}
+
+.post-scroll {
+  height: 100vh;
+}
+
+.post-list {
+  padding: 24rpx;
+}
+
+/* 公告卡片 */
+.post-card {
+  background-color: var(--card-bg);
+  border-radius: 16rpx;
+  margin-bottom: 24rpx;
+  overflow: hidden;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.post-cover {
+  width: 100%;
+  height: 300rpx;
+}
+
+.post-body {
+  padding: 24rpx;
+}
+
+.post-title {
+  font-size: 32rpx;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.4;
+  margin-bottom: 12rpx;
+}
+
+.post-summary {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 16rpx;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.post-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.post-author {
+  font-size: 22rpx;
+  color: var(--primary-color);
+}
+
+.post-time {
+  font-size: 22rpx;
+  color: var(--text-hint);
+}
+
+/* 加载状态 */
+.loading-area {
+  display: flex;
+  justify-content: center;
+  padding: 40rpx;
+}
+
+.loading-text {
+  font-size: 26rpx;
+  color: var(--text-hint);
+}
+
+.no-more {
+  text-align: center;
+  padding: 40rpx;
+}
+
+.no-more-text {
+  font-size: 24rpx;
+  color: var(--text-hint);
+}
+
+/* 空状态 */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 200rpx;
+}
+
+.empty-icon {
+  font-size: 80rpx;
+  margin-bottom: 24rpx;
+}
+
+.empty-text {
+  font-size: 32rpx;
+  color: var(--text-primary);
+  margin-bottom: 12rpx;
+}
+
+.empty-hint {
+  font-size: 26rpx;
+  color: var(--text-hint);
+}

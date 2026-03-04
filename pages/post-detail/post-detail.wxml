@@ -1,0 +1,43 @@
+<!--pages/post-detail/post-detail.wxml-->
+<view class="page">
+  <!-- 加载状态 -->
+  <view class="loading-state" wx:if="{{loading}}">
+    <text class="loading-text">加载中...</text>
+  </view>
+
+  <!-- 错误状态 -->
+  <view class="error-state" wx:elif="{{error}}">
+    <text class="error-icon">😵</text>
+    <text class="error-text">加载失败</text>
+    <text class="error-hint">请返回重试</text>
+  </view>
+
+  <!-- 详情内容 -->
+  <view class="detail-content" wx:elif="{{post}}">
+    <!-- 封面图 -->
+    <image 
+      wx:if="{{post.coverUrl}}" 
+      class="detail-cover" 
+      src="{{post.coverUrl}}" 
+      mode="widthFix" />
+
+    <!-- 标题 -->
+    <view class="detail-title">{{post.title}}</view>
+
+    <!-- 发布信息 -->
+    <view class="meta-row">
+      <text class="meta-author">{{post.author}}</text>
+      <text class="meta-time">{{publishTime}}</text>
+      <text class="meta-ago">（{{timeAgo}}）</text>
+    </view>
+
+    <!-- 正文内容（HTML 渲染） -->
+    <view class="content-section">
+      <rich-text nodes="{{post.contentHtml}}" wx:if="{{post.contentHtml}}"></rich-text>
+      <view class="content-text" wx:elif="{{post.contentMd}}">{{post.contentMd}}</view>
+      <view class="content-empty" wx:else>
+        <text>暂无内容</text>
+      </view>
+    </view>
+  </view>
+</view>

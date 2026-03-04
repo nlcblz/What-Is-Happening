@@ -1,4 +1,6 @@
 // pages/settings/settings.js
+const api = require('../../utils/api')
+
 // 兴趣分类配置
 const interestCategories = [
   { id: 'tech', name: '科技' },
@@ -13,7 +15,8 @@ Page({
     apiKey: '',
     aiProvider: 'deepseek',
     interestCategories: interestCategories,
-    selectedInterests: []
+    selectedInterests: [],
+    isAdmin: false
   },
   onLoad() {
     console.log('[WIH] Settings page loaded')
@@ -22,6 +25,34 @@ Page({
     const aiProvider = wx.getStorageSync('aiProvider') || 'deepseek'
     const selectedInterests = wx.getStorageSync('interests') || []
     this.setData({ apiKey, aiProvider, selectedInterests })
+    // 检测管理员身份
+    this.checkAdminStatus()
+  },
+  onShow() {
+    // 每次显示时重新检测管理员身份
+    this.checkAdminStatus()
+  },
+  // 检测是否为管理员
+  async checkAdminStatus() {
+    try {
+      const res = await api.checkAdmin()
+      this.setData({ isAdmin: res.isAdmin })
+    } catch (err) {
+      console.error('[WIH] 检测管理员身份失败:', err)
+      this.setData({ isAdmin: false })
+    }
+  },
+  // 跳转到官方公告
+  goToAnnouncements() {
+    wx.navigateTo({ url: '/pages/announcements/announcements' })
+  },
+  // 跳转到内容管理（仅管理员）
+  goToAdmin() {
+    if (!this.data.isAdmin) {
+      wx.showToast({ title: '无权限', icon: 'error' })
+      return
+    }
+    wx.navigateTo({ url: '/pages/admin/admin' })
   },
   onApiKeyInput(e) {
     this.setData({ apiKey: e.detail.value })

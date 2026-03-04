@@ -1,0 +1,79 @@
+<!--pages/admin/admin.wxml-->
+<view class="page">
+  <!-- 顶部操作栏 -->
+  <view class="toolbar">
+    <!-- 状态筛选 -->
+    <picker 
+      mode="selector" 
+      range="{{['全部', '草稿', '已发布']}}" 
+      value="{{statusFilter === 'all' ? 0 : (statusFilter === 'draft' ? 1 : 2)}}"
+      bindchange="onFilterChange">
+      <view class="filter-btn">
+        <text class="filter-text">{{statusFilter === 'all' ? '全部' : (statusFilter === 'draft' ? '草稿' : '已发布')}}</text>
+        <text class="filter-arrow">▼</text>
+      </view>
+    </picker>
+
+    <!-- 上传 MD 按钮 -->
+    <view class="upload-btn {{uploading ? 'disabled' : ''}}" bindtap="onUploadMd">
+      <text class="upload-icon">📄</text>
+      <text class="upload-text">{{uploading ? '上传中...' : '上传 MD 文件'}}</text>
+    </view>
+  </view>
+
+  <!-- 文章列表 -->
+  <scroll-view
+    scroll-y
+    class="post-scroll"
+    refresher-enabled
+    refresher-triggered="{{refreshing}}"
+    bindrefresherrefresh="onPullDownRefresh"
+    bindscrolltolower="onReachBottom">
+
+    <view class="post-list" wx:if="{{posts.length > 0}}">
+      <view class="admin-card" wx:for="{{posts}}" wx:key="id">
+        <!-- 卡片主体（可点击预览） -->
+        <view class="card-main" bindtap="onPostTap" data-id="{{item.id}}">
+          <view class="card-header">
+            <view class="status-badge {{item.status}}">{{item.statusLabel}}</view>
+            <text class="card-time">{{item.timeAgo}}</text>
+          </view>
+          <view class="card-title">{{item.title}}</view>
+          <view class="card-summary" wx:if="{{item.summary}}">{{item.summary}}</view>
+        </view>
+
+        <!-- 操作按钮 -->
+        <view class="card-actions">
+          <view 
+            class="action-btn publish" 
+            bindtap="onTogglePublish" 
+            data-id="{{item.id}}" 
+            data-status="{{item.status}}">
+            {{item.status === 'published' ? '取消发布' : '发布'}}
+          </view>
+          <view 
+            class="action-btn delete" 
+            bindtap="onDeletePost" 
+            data-id="{{item.id}}">
+            删除
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 加载状态 -->
+    <view class="loading-area" wx:if="{{loading}}">
+      <text class="loading-text">加载中...</text>
+    </view>
+    <view class="no-more" wx:if="{{!hasMore && posts.length > 0 && !loading}}">
+      <text class="no-more-text">— 没有更多了 —</text>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty-state" wx:if="{{posts.length === 0 && !loading}}">
+      <text class="empty-icon">📝</text>
+      <text class="empty-text">暂无文章</text>
+      <text class="empty-hint">点击上方「上传 MD 文件」创建第一篇</text>
+    </view>
+  </scroll-view>
+</view>

@@ -166,4 +166,91 @@ function getCategories() {
   return get('/api/sources/categories')
 }
 
-module.exports = { request, get, post, getTrends, searchTrends, getTrendById, refreshTrends, summarize, translateTrend, healthCheck, getSources, getCategories }
+// ========== 管理员发布 API ==========
+
+// 获取已发布的公告列表
+function getPosts(params = {}) {
+  const { page = 1, pageSize = 20, category = 'all' } = params
+  return get('/api/posts', { page, pageSize, category })
+}
+
+// 获取单篇公告详情
+function getPostById(id) {
+  return get(`/api/posts/${id}`)
+}
+
+// 获取所有文章（含草稿，管理员用）
+function getAdminPosts(params = {}) {
+  const { page = 1, pageSize = 20, status = 'all', category = 'all' } = params
+  return get('/api/posts/admin/list', { page, pageSize, status, category })
+}
+
+// 创建文章
+function createPost(data) {
+  return post('/api/posts', data)
+}
+
+// 更新文章
+function updatePost(id, data) {
+  return request({ url: `/api/posts/${id}`, method: 'PUT', data })
+}
+
+// 删除文章
+function deletePost(id) {
+  return request({ url: `/api/posts/${id}`, method: 'DELETE' })
+}
+
+// 发布/取消发布文章
+function publishPost(id, publish = true) {
+  return post(`/api/posts/${id}/publish`, { publish })
+}
+
+// 上传 MD 文件创建文章
+function uploadMdFile(filePath) {
+  return new Promise((resolve, reject) => {
+    const config = require('./config')
+    
+    if (config.mode === 'cloud') {
+      wx.cloud.uploadFile({
+        cloudPath: `admin/md/${Date.now()}-${Math.random().toString(36).slice(2)}.md`,
+        filePath: filePath,
+        success: res => {
+          // 上传到云存储后，调用后端解析
+          post('/api/posts/upload-md', { fileID: res.fileID })
+            .then(resolve)
+            .catch(reject)
+        },
+        fail: reject
+      })
+    } else {
+      // 本地开发模式：直接上传到后端
+      wx.uploadFile({
+        url: `${config.apiBaseUrl}/api/posts/upload-md`,
+        filePath: filePath,
+        name: 'file',
+        success: res => {
+          if (res.statusCode === 200 || res.statusCode === 201) {
+            resolve(JSON.parse(res.data))
+          } else {
+            reject(new Error('上传失败'))
+          }
+        },
+        fail: reject
+      })
+    }
+  })
+}
+
+// 检测当前用户是否为管理员
+function checkAdmin() {
+  return get('/api/auth/check-admin')
+}
+
+module.exports = { 
+  request, get, post, 
+  getTrends, searchTrends, getTrendById, refreshTrends, 
+  summarize, translateTrend, 
+  healthCheck, getSources, getCategories,
+  getPosts, getPostById, getAdminPosts, createPost, updatePost, deletePost, publishPost, uploadMdFile,
+  checkAdmin
+}
