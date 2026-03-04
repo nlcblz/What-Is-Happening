@@ -169,6 +169,100 @@
   line-height: 1.7;
 }
 
+/* ========== 翻译开关 ========== */
+.translate-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--card-bg);
+  border-radius: 16rpx;
+  padding: 24rpx 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.toggle-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.toggle-label {
+  font-size: 28rpx;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4rpx;
+}
+
+.toggle-hint {
+  font-size: 22rpx;
+  color: var(--text-hint);
+}
+
+.toggle-switch {
+  transform: scale(0.85);
+}
+
+/* 翻译中提示 */
+.translating-hint {
+  display: flex;
+  justify-content: center;
+  padding: 20rpx;
+  margin-bottom: 24rpx;
+}
+
+.translating-text {
+  font-size: 26rpx;
+  color: #3b82f6;
+}
+
+/* ========== 全文内容区域 ========== */
+.content-section {
+  background-color: var(--card-bg);
+  border-radius: 16rpx;
+  padding: 28rpx;
+  margin-bottom: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+
+.content-text {
+  font-size: 30rpx;
+  color: var(--text-primary);
+  line-height: 1.9;
+  letter-spacing: 0.5rpx;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* 双语对照区块 */
+.bilingual-block {
+  margin-bottom: 32rpx;
+  padding-bottom: 24rpx;
+  border-bottom: 1rpx dashed var(--border-color);
+}
+
+.bilingual-block:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.para-en {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  line-height: 1.7;
+  margin-bottom: 16rpx;
+  padding-left: 20rpx;
+  border-left: 4rpx solid #3b82f6;
+}
+
+.para-zh {
+  font-size: 30rpx;
+  color: var(--text-primary);
+  line-height: 1.9;
+  padding-left: 20rpx;
+  border-left: 4rpx solid #10b981;
+}
+
 /* 链接区域 */
 .link-section {
   background-color: var(--card-bg);

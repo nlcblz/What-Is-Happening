@@ -43,8 +43,45 @@
       <view class="summary-text">{{trend.summaryZh}}</view>
     </view>
 
-    <!-- 英文摘要（如有） -->
-    <view class="summary-section" wx:if="{{trend.summary && trend.summary !== trend.summaryZh}}">
+    <!-- 翻译开关（仅当有全文内容且非中文时显示） -->
+    <view class="translate-toggle" wx:if="{{hasContent && needsTranslation}}">
+      <view class="toggle-left">
+        <text class="toggle-label">🌐 显示中文翻译</text>
+        <text class="toggle-hint">AI双语对照</text>
+      </view>
+      <switch
+        class="toggle-switch"
+        checked="{{showTranslation}}"
+        bindchange="onToggleTranslation"
+        disabled="{{translating}}"
+        color="#3b82f6" />
+    </view>
+
+    <!-- 翻译中提示 -->
+    <view class="translating-hint" wx:if="{{translating}}">
+      <text class="translating-text">正在翻译中，请稍候...</text>
+    </view>
+
+    <!-- 全文内容区域 -->
+    <view class="content-section" wx:if="{{hasContent}}">
+      <view class="section-title">📄 全文内容</view>
+      
+      <!-- 双语对照模式 -->
+      <block wx:if="{{showTranslation && paragraphs.length > 0}}">
+        <view class="bilingual-block" wx:for="{{paragraphs}}" wx:key="index">
+          <view class="para-en">{{item.en}}</view>
+          <view class="para-zh">{{item.zh}}</view>
+        </view>
+      </block>
+
+      <!-- 原文模式（不翻译或中文内容） -->
+      <block wx:else>
+        <view class="content-text">{{trend.content}}</view>
+      </block>
+    </view>
+
+    <!-- 英文摘要（如有且无全文） -->
+    <view class="summary-section" wx:if="{{!hasContent && trend.summary && trend.summary !== trend.summaryZh}}">
       <view class="section-title">📄 原文摘要</view>
       <view class="summary-text summary-en">{{trend.summary}}</view>
     </view>

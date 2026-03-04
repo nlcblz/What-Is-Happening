@@ -141,6 +141,16 @@ function summarize(data) {
   })
 }
 
+// 翻译趋势全文
+function translateTrend(id, options = {}) {
+  const apiKey = wx.getStorageSync('apiKey') || ''
+  const aiProvider = wx.getStorageSync('aiProvider') || 'deepseek'
+  return post(`/api/trends/${id}/translate`, {
+    apiKey,
+    provider: options.provider || aiProvider
+  })
+}
+
 // 健康检查
 function healthCheck() {
   return get('/health')
@@ -156,4 +166,4 @@ function getCategories() {
   return get('/api/sources/categories')
 }
 
-module.exports = { request, get, post, getTrends, searchTrends, getTrendById, refreshTrends, summarize, healthCheck, getSources, getCategories }
+module.exports = { request, get, post, getTrends, searchTrends, getTrendById, refreshTrends, summarize, translateTrend, healthCheck, getSources, getCategories }
